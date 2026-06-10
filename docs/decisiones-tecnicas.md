@@ -47,7 +47,30 @@ Principios aplicados:
 - **Mensajes claros**: todo caso de error (entrada inválida, búsqueda sin
   resultados, CSV roto) produce un mensaje explicativo y nunca un cierre abrupto.
 
-## Origen del dataset
+## Manejo de errores: dos estrategias
+
+Las validaciones lanzan excepciones (`raise ValueError("mensaje descriptivo")`) en
+lugar de imprimir directamente, y quien llama decide qué hacer con el error
+(`try/except ValueError as e: print("Error:", e)`). Según qué tan recuperable sea
+el error, conviven dos estrategias:
+
+1. **Errores recuperables en el lugar** — se atrapan cerca de donde ocurren, con un
+   *subciclo* que informa y reintenta hasta recibir un dato válido. El usuario no
+   pierde lo que ya cargó. Casos: nombre vacío o duplicado en el alta
+   (`validar_nombre`), rango con mínimo mayor que máximo en los filtros, opción de
+   menú fuera de rango (`pedir_opcion`), entrada no numérica (`pedir_entero_positivo`).
+
+2. **Errores que abortan la operación** — la función los lanza y **no** los atrapa:
+   la excepción propaga hasta el `try/except` del loop principal en `main()`, que
+   imprime el mensaje y vuelve a mostrar el menú. Caso: actualizar un país que no
+   existe (ahí no tiene sentido insistir; probablemente el usuario quiera ir antes
+   a la opción de búsqueda).
+
+La ventaja de lanzar excepciones en vez de imprimir es que **la función que valida
+no decide la política de manejo**: el mismo `validar_nombre` puede usarse en un
+subciclo con reintento o dejarse propagar, sin tocar su código. El `try/except` del
+loop principal funciona además como red de seguridad de todo el programa: cualquier
+`ValueError` no manejado se informa y el programa sigue, nunca se corta abruptamente.
 
 `csv/paises.csv` se genera con `csv/generar_csv.py` a partir de la API pública
 [restcountries.com](https://restcountries.com/), con esta limpieza:

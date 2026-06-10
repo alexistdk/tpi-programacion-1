@@ -23,7 +23,7 @@ flowchart TD
     I -- 5 --> O5[Filtrar países]
     I -- 6 --> O6[Ordenar países]
     I -- 7 --> O7[Mostrar estadísticas]
-    I -- "0 - Salir" --> Z
+    I -- "8 - Salir" --> Z
     O1 --> E
     O2 --> E
     O3 --> E
@@ -99,10 +99,9 @@ flowchart TD
     C -- Continente --> D[/Pedir continente/]
     D --> E[Recorrer la lista y quedarse con<br>los países de ese continente]
     C -- Población --> F[/Pedir mínimo y máximo/]
-    C -- Superficie --> G[/Pedir mínimo y máximo/]
+    C -- Superficie --> F
     F --> H{¿Rango válido?}
-    G --> H
-    H -- No --> I[Mensaje: rango inválido] --> B
+    H -- No --> I[Mensaje: rango inválido] --> F
     H -- Sí --> J[Recorrer la lista y quedarse con<br>los países dentro del rango]
     E --> K{¿Hubo resultados?}
     J --> K
