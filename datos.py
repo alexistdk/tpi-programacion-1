@@ -1,0 +1,169 @@
+"""Módulo datos.py — lectura/escritura del CSV y operaciones sobre países."""
+
+RUTA_CSV = "csv/paises.csv"
+ENCABEZADO = "nombre,poblacion,superficie,continente"
+
+
+def cargar_paises(ruta):
+    """Lee el CSV y devuelve la lista de países como diccionarios.
+
+    Las líneas con formato inválido se informan y se omiten.
+    Si el archivo no existe devuelve None.
+    """
+    try:
+        archivo = open(ruta, encoding="utf-8")
+    except FileNotFoundError:
+        print(f"Error: no se encontró el archivo '{ruta}'.")
+        print("Verificá que exista y que el programa se ejecute desde la raíz del proyecto.")
+        return None
+
+    paises = []
+    with archivo:
+        archivo.readline()
+        numero_linea = 1
+        for linea in archivo:
+            numero_linea = numero_linea + 1
+            linea = linea.strip()
+            if linea == "":
+                continue
+            campos = linea.split(",")
+            if len(campos) != 4 or "" in campos:
+                print(f"Aviso: línea {numero_linea} con formato inválido, se omite: {linea}")
+                continue
+            try:
+                pais = {
+                    "nombre": campos[0],
+                    "poblacion": int(campos[1]),
+                    "superficie": int(campos[2]),
+                    "continente": campos[3],
+                }
+            except ValueError:
+                print(f"Aviso: línea {numero_linea} con números inválidos, se omite: {linea}")
+                continue
+            paises.append(pais)
+    return paises
+
+
+def guardar_paises(paises, ruta):
+    """Reescribe el archivo CSV completo con la lista de países."""
+    with open(ruta, "w", encoding="utf-8") as archivo:
+        archivo.write(ENCABEZADO + "\n")
+        for pais in paises:
+            linea = f"{pais['nombre']},{pais['poblacion']},{pais['superficie']},{pais['continente']}"
+            archivo.write(linea + "\n")
+
+
+def pedir_texto(mensaje):
+    """Pide un texto al usuario y reintenta hasta que no sea vacío."""
+    while True:
+        texto = input(mensaje).strip()
+        if texto != "":
+            return texto
+        print("Error: el valor no puede estar vacío. Intentá de nuevo.")
+
+
+def pedir_entero_positivo(mensaje):
+    """Pide un número al usuario y reintenta hasta que sea un entero mayor a cero."""
+    while True:
+        entrada = input(mensaje).strip()
+        try:
+            numero = int(entrada)
+        except ValueError:
+            print("Error: debe ser un número entero. Intentá de nuevo.")
+            continue
+        if numero > 0:
+            return numero
+        print("Error: debe ser un entero mayor a cero. Intentá de nuevo.")
+
+
+def pedir_opcion(mensaje, minimo, maximo):
+    """Pide un número de opción y reintenta hasta que sea un entero dentro del rango."""
+    while True:
+        try:
+            opcion = int(input(mensaje))
+        except ValueError:
+            print("Error: debe ingresar un número entero")
+            continue
+        if minimo <= opcion <= maximo:
+            return opcion
+        print(f"Error: la opción debe estar entre {minimo} y {maximo}")
+
+
+def buscar_pais_exacto(paises, nombre):
+    """Devuelve el país cuyo nombre coincide exactamente (sin distinguir mayúsculas), o None."""
+    for pais in paises:
+        if pais["nombre"].lower() == nombre.lower():
+            return pais
+    return None
+
+
+def buscar_paises(paises, texto):
+    """Devuelve los países cuyo nombre contiene el texto (sin distinguir mayúsculas)."""
+    encontrados = []
+    for pais in paises:
+        if texto.lower() in pais["nombre"].lower():
+            encontrados.append(pais)
+    return encontrados
+
+
+def validar_nombre(paises, nombre):
+    """Valida que el nombre no esté vacío ni repetido. Lanza ValueError si no cumple."""
+    if nombre == "":
+        raise ValueError("el nombre no puede estar vacío")
+    if buscar_pais_exacto(paises, nombre) is not None:
+        raise ValueError(f"'{nombre}' ya existe en la lista, ingrese otro nombre")
+
+
+def agregar_pais(paises):
+    """Da de alta un nuevo país pidiendo y validando sus datos."""
+    while True:
+        try:
+            nombre = input("Nombre del país: ").strip()
+            validar_nombre(paises, nombre)
+            break
+        except ValueError as e:
+            print("Error:", e)
+    poblacion = pedir_entero_positivo("Población: ")
+    superficie = pedir_entero_positivo("Superficie (km²): ")
+    continente = pedir_texto("Continente: ")
+    pais = {
+        "nombre": nombre,
+        "poblacion": poblacion,
+        "superficie": superficie,
+        "continente": continente,
+    }
+    paises.append(pais)
+    guardar_paises(paises, RUTA_CSV)
+    print(f"País '{nombre}' agregado con éxito.")
+
+
+def actualizar_pais(paises):
+    """Actualiza la población y la superficie de un país existente."""
+    nombre = pedir_texto("Nombre del país a actualizar: ")
+    pais = buscar_pais_exacto(paises, nombre)
+    if pais is None:
+        raise ValueError(f"no se encontró el país '{nombre}'")
+    print(f"Datos actuales de {pais['nombre']}: "
+          f"población {pais['poblacion']:,}, superficie {pais['superficie']:,} km².")
+    pais["poblacion"] = pedir_entero_positivo("Nueva población: ")
+    pais["superficie"] = pedir_entero_positivo("Nueva superficie (km²): ")
+    guardar_paises(paises, RUTA_CSV)
+    print(f"País '{pais['nombre']}' actualizado con éxito.")
+
+
+def filtrar_por_continente(paises, continente):
+    """Devuelve los países del continente indicado (sin distinguir mayúsculas)."""
+    filtrados = []
+    for pais in paises:
+        if pais["continente"].lower() == continente.lower():
+            filtrados.append(pais)
+    return filtrados
+
+
+def filtrar_por_rango(paises, campo, minimo, maximo):
+    """Devuelve los países cuyo campo está dentro del rango indicado."""
+    filtrados = []
+    for pais in paises:
+        if minimo <= pais[campo] <= maximo:
+            filtrados.append(pais)
+    return filtrados
