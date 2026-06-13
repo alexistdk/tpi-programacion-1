@@ -1,5 +1,7 @@
 """Módulo datos.py — lectura/escritura del CSV y operaciones sobre países."""
  
+from helpers import pedir_texto, pedir_opcion, pedir_entero_positivo
+ 
 RUTA_CSV = "csv/paises.csv"
 ENCABEZADO = "nombre,poblacion,superficie,continente"
  
@@ -51,42 +53,6 @@ def guardar_paises(paises, ruta):
         for pais in paises:
             linea = f"{pais['nombre']},{pais['poblacion']},{pais['superficie']},{pais['continente']}"
             archivo.write(linea + "\n")
- 
- 
-def pedir_texto(mensaje):
-    """Pide un texto al usuario y reintenta hasta que no sea vacío."""
-    while True:
-        texto = input(mensaje).strip()
-        if texto != "":
-            return texto
-        print("Error: el valor no puede estar vacío. Intentá de nuevo.")
- 
- 
-def pedir_opcion(mensaje, minimo, maximo):
-    """Pide un número de opción y reintenta hasta que sea un entero dentro del rango."""
-    while True:
-        try:
-            opcion = int(input(mensaje))
-        except ValueError:
-            print("Error: debe ingresar un número entero")
-            continue
-        if minimo <= opcion <= maximo:
-            return opcion
-        print(f"Error: la opción debe estar entre {minimo} y {maximo}")
- 
- 
-def pedir_entero_positivo(mensaje):
-    """Pide un número al usuario y reintenta hasta que sea un entero mayor a cero."""
-    while True:
-        entrada = input(mensaje).strip()
-        try:
-            numero = int(entrada)
-        except ValueError:
-            print("Error: debe ser un número entero. Intentá de nuevo.")
-            continue
-        if numero > 0:
-            return numero
-        print("Error: debe ser un entero mayor a cero. Intentá de nuevo.")
  
  
 def buscar_pais_exacto(paises, nombre):
