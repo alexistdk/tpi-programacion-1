@@ -5,18 +5,18 @@ from archivo import guardar_paises, RUTA_CSV
 
 
 def buscar_pais_exacto(paises, nombre):
-    """Devuelve el país cuyo nombre coincide exactamente (sin distinguir mayúsculas), o None."""
+    """Devuelve el país cuyo nombre coincide exactamente (sin distinguir mayúsculas ni tildes), o None."""
     for pais in paises:
-        if pais["nombre"].lower() == nombre.lower():
+        if sin_tildes(pais["nombre"]) == sin_tildes(nombre):
             return pais
     return None
 
 
 def buscar_paises(paises, texto):
-    """Devuelve los países cuyo nombre contiene el texto (sin distinguir mayúsculas)."""
+    """Devuelve los países cuyo nombre contiene el texto (sin distinguir mayúsculas ni tildes)."""
     encontrados = []
     for pais in paises:
-        if texto.lower() in pais["nombre"].lower():
+        if sin_tildes(texto) in sin_tildes(pais["nombre"]):
             encontrados.append(pais)
     return encontrados
 
@@ -69,10 +69,10 @@ def actualizar_pais(paises):
 
 
 def filtrar_por_continente(paises, continente):
-    """Devuelve los países del continente indicado (sin distinguir mayúsculas)."""
+    """Devuelve los países del continente indicado (sin distinguir mayúsculas ni tildes)."""
     filtrados = []
     for pais in paises:
-        if pais["continente"].lower() == continente.lower():
+        if sin_tildes(pais["continente"]) == sin_tildes(continente):
             filtrados.append(pais)
     return filtrados
 
