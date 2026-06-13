@@ -17,7 +17,7 @@ Aplicación de consola desarrollada en Python que permite gestionar un dataset d
 
 
 Estructura del proyecto
-
+```
 tpi-programacion-1/
 │
 ├── main.py              # Punto de entrada del programa
@@ -25,7 +25,7 @@ tpi-programacion-1/
 │   └── paises.csv       # Dataset base de países
 ├── generar_csv.py       # Script para regenerar el CSV desde la API restcountries.com
 └── README.md
-
+```
 
 Instrucciones de uso
 
@@ -36,7 +36,9 @@ Requisitos:
 Cómo ejecutar:
 Cloná el repositorio o descargá los archivos.
 Desde la raíz del proyecto, ejecutá:
-bashpython3 main.py
+```bash
+python3 main.py
+```
 Es importante ejecutarlo desde la raíz del proyecto para que encuentre correctamente el archivo csv/paises.csv.
 
 
