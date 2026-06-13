@@ -1,12 +1,20 @@
 """TPI Programación 1 — Gestión de Datos de Países en Python.
  
-Punto de entrada del programa. Importa los módulos datos y estadisticas.
- 
+Punto de entrada del programa. Importa los módulos archivo, operaciones y estadisticas.
+
 Uso: python3 main.py (desde la raíz del proyecto)
 """
- 
-from datos import cargar_paises, agregar_pais, actualizar_pais, menu_filtrar, RUTA_CSV
-from estadisticas import mostrar_paises, mostrar_estadisticas, menu_buscar, menu_ordenar
+
+from archivo import cargar_paises, RUTA_CSV
+from operaciones import (
+    agregar_pais,
+    actualizar_pais,
+    menu_buscar,
+    menu_filtrar,
+    menu_ordenar,
+    mostrar_paises,
+)
+from estadisticas import mostrar_estadisticas
  
  
 def mostrar_menu():
