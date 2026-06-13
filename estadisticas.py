@@ -1,13 +1,7 @@
 """Módulo estadisticas.py — ordenamientos, estadísticas, visualización y submenús."""
  
-import unicodedata
-from datos import buscar_paises, pedir_texto, pedir_opcion
- 
- 
-def sin_tildes(texto):
-    """Devuelve el texto en minúsculas y sin tildes, para comparar alfabéticamente."""
-    texto = unicodedata.normalize("NFKD", texto)
-    return texto.encode("ascii", "ignore").decode().lower()
+from helpers import sin_tildes, pedir_texto, pedir_opcion
+from datos import buscar_paises
  
  
 def obtener_nombre(pais):
@@ -107,4 +101,8 @@ def menu_ordenar(paises):
     opcion_sentido = pedir_opcion("Seleccione el sentido: ", 1, 2)
     descendente = (opcion_sentido == 2)
     mostrar_paises(ordenar_paises(paises, clave, descendente))
- 
+
+
+
+
+
