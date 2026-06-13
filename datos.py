@@ -1,12 +1,12 @@
 """Módulo datos.py — lectura/escritura del CSV y operaciones sobre países."""
-
+ 
 RUTA_CSV = "csv/paises.csv"
 ENCABEZADO = "nombre,poblacion,superficie,continente"
-
-
+ 
+ 
 def cargar_paises(ruta):
     """Lee el CSV y devuelve la lista de países como diccionarios.
-
+ 
     Las líneas con formato inválido se informan y se omiten.
     Si el archivo no existe devuelve None.
     """
@@ -16,7 +16,7 @@ def cargar_paises(ruta):
         print(f"Error: no se encontró el archivo '{ruta}'.")
         print("Verificá que exista y que el programa se ejecute desde la raíz del proyecto.")
         return None
-
+ 
     paises = []
     with archivo:
         archivo.readline()
@@ -42,8 +42,8 @@ def cargar_paises(ruta):
                 continue
             paises.append(pais)
     return paises
-
-
+ 
+ 
 def guardar_paises(paises, ruta):
     """Reescribe el archivo CSV completo con la lista de países."""
     with open(ruta, "w", encoding="utf-8") as archivo:
@@ -51,8 +51,8 @@ def guardar_paises(paises, ruta):
         for pais in paises:
             linea = f"{pais['nombre']},{pais['poblacion']},{pais['superficie']},{pais['continente']}"
             archivo.write(linea + "\n")
-
-
+ 
+ 
 def pedir_texto(mensaje):
     """Pide un texto al usuario y reintenta hasta que no sea vacío."""
     while True:
@@ -60,8 +60,21 @@ def pedir_texto(mensaje):
         if texto != "":
             return texto
         print("Error: el valor no puede estar vacío. Intentá de nuevo.")
-
-
+ 
+ 
+def pedir_opcion(mensaje, minimo, maximo):
+    """Pide un número de opción y reintenta hasta que sea un entero dentro del rango."""
+    while True:
+        try:
+            opcion = int(input(mensaje))
+        except ValueError:
+            print("Error: debe ingresar un número entero")
+            continue
+        if minimo <= opcion <= maximo:
+            return opcion
+        print(f"Error: la opción debe estar entre {minimo} y {maximo}")
+ 
+ 
 def pedir_entero_positivo(mensaje):
     """Pide un número al usuario y reintenta hasta que sea un entero mayor a cero."""
     while True:
@@ -74,29 +87,16 @@ def pedir_entero_positivo(mensaje):
         if numero > 0:
             return numero
         print("Error: debe ser un entero mayor a cero. Intentá de nuevo.")
-
-
-def pedir_opcion(mensaje, minimo, maximo):
-    """Pide un número de opción y reintenta hasta que sea un entero dentro del rango."""
-    while True:
-        try:
-            opcion = int(input(mensaje))
-        except ValueError:
-            print("Error: debe ingresar un número entero")
-            continue
-        if minimo <= opcion <= maximo:
-            return opcion
-        print(f"Error: la opción debe estar entre {minimo} y {maximo}")
-
-
+ 
+ 
 def buscar_pais_exacto(paises, nombre):
     """Devuelve el país cuyo nombre coincide exactamente (sin distinguir mayúsculas), o None."""
     for pais in paises:
         if pais["nombre"].lower() == nombre.lower():
             return pais
     return None
-
-
+ 
+ 
 def buscar_paises(paises, texto):
     """Devuelve los países cuyo nombre contiene el texto (sin distinguir mayúsculas)."""
     encontrados = []
@@ -104,16 +104,16 @@ def buscar_paises(paises, texto):
         if texto.lower() in pais["nombre"].lower():
             encontrados.append(pais)
     return encontrados
-
-
+ 
+ 
 def validar_nombre(paises, nombre):
     """Valida que el nombre no esté vacío ni repetido. Lanza ValueError si no cumple."""
     if nombre == "":
         raise ValueError("el nombre no puede estar vacío")
     if buscar_pais_exacto(paises, nombre) is not None:
         raise ValueError(f"'{nombre}' ya existe en la lista, ingrese otro nombre")
-
-
+ 
+ 
 def agregar_pais(paises):
     """Da de alta un nuevo país pidiendo y validando sus datos."""
     while True:
@@ -135,8 +135,8 @@ def agregar_pais(paises):
     paises.append(pais)
     guardar_paises(paises, RUTA_CSV)
     print(f"País '{nombre}' agregado con éxito.")
-
-
+ 
+ 
 def actualizar_pais(paises):
     """Actualiza la población y la superficie de un país existente."""
     nombre = pedir_texto("Nombre del país a actualizar: ")
@@ -149,8 +149,8 @@ def actualizar_pais(paises):
     pais["superficie"] = pedir_entero_positivo("Nueva superficie (km²): ")
     guardar_paises(paises, RUTA_CSV)
     print(f"País '{pais['nombre']}' actualizado con éxito.")
-
-
+ 
+ 
 def filtrar_por_continente(paises, continente):
     """Devuelve los países del continente indicado (sin distinguir mayúsculas)."""
     filtrados = []
@@ -158,8 +158,8 @@ def filtrar_por_continente(paises, continente):
         if pais["continente"].lower() == continente.lower():
             filtrados.append(pais)
     return filtrados
-
-
+ 
+ 
 def filtrar_por_rango(paises, campo, minimo, maximo):
     """Devuelve los países cuyo campo está dentro del rango indicado."""
     filtrados = []
@@ -167,3 +167,34 @@ def filtrar_por_rango(paises, campo, minimo, maximo):
         if minimo <= pais[campo] <= maximo:
             filtrados.append(pais)
     return filtrados
+ 
+ 
+def menu_filtrar(paises):
+    """Submenú de filtros: por continente o por rango de población/superficie."""
+    print("\n--- FILTRAR PAÍSES ---")
+    print("1. Por continente")
+    print("2. Por rango de población")
+    print("3. Por rango de superficie")
+    opcion = pedir_opcion("Seleccione una opción: ", 1, 3)
+    if opcion == 1:
+        continente = pedir_texto("Continente: ")
+        filtrados = filtrar_por_continente(paises, continente)
+    else:
+        if opcion == 2:
+            campo = "poblacion"
+        else:
+            campo = "superficie"
+        while True:
+            minimo = pedir_entero_positivo("Valor mínimo: ")
+            maximo = pedir_entero_positivo("Valor máximo: ")
+            if minimo > maximo:
+                print("Error: el mínimo no puede ser mayor que el máximo.")
+            else:
+                break
+        filtrados = filtrar_por_rango(paises, campo, minimo, maximo)
+    if len(filtrados) == 0:
+        print("Ningún país cumple con el filtro.")
+    else:
+        from estadisticas import mostrar_paises
+        mostrar_paises(filtrados)
+ 
