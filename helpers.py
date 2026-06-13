@@ -18,6 +18,15 @@ def pedir_texto(mensaje):
         print("Error: el valor no puede estar vacío. Intentá de nuevo.")
 
 
+def pedir_texto_sin_coma(mensaje):
+    """Pide un texto no vacío y sin comas (una coma rompería el formato del CSV)."""
+    while True:
+        texto = pedir_texto(mensaje)
+        if "," not in texto:
+            return texto
+        print("Error: el valor no puede contener comas (,). Intentá de nuevo.")
+
+
 def pedir_opcion(mensaje, minimo, maximo):
     """Pide un número de opción y reintenta hasta que sea un entero dentro del rango."""
     while True:

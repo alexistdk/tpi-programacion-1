@@ -1,6 +1,6 @@
 """Módulo operaciones.py — agregar, actualizar, buscar, filtrar y ordenar países."""
 
-from helpers import sin_tildes, pedir_texto, pedir_opcion, pedir_entero_positivo
+from helpers import sin_tildes, pedir_texto, pedir_texto_sin_coma, pedir_opcion, pedir_entero_positivo
 from archivo import guardar_paises, RUTA_CSV
 
 
@@ -25,6 +25,8 @@ def validar_nombre(paises, nombre):
     """Valida que el nombre no esté vacío ni repetido. Lanza ValueError si no cumple."""
     if nombre == "":
         raise ValueError("el nombre no puede estar vacío")
+    if "," in nombre:
+        raise ValueError("el nombre no puede contener comas (,)")
     if buscar_pais_exacto(paises, nombre) is not None:
         raise ValueError(f"'{nombre}' ya existe en la lista, ingrese otro nombre")
 
@@ -40,7 +42,7 @@ def agregar_pais(paises):
             print("Error:", e)
     poblacion = pedir_entero_positivo("Población: ")
     superficie = pedir_entero_positivo("Superficie (km²): ")
-    continente = pedir_texto("Continente: ")
+    continente = pedir_texto_sin_coma("Continente: ")
     pais = {
         "nombre": nombre,
         "poblacion": poblacion,
